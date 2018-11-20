@@ -1,0 +1,40 @@
+{
+  "name": "rampe",
+  "version": "1.0.0",
+  "description": "An AMP based static blogging engine.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare" : "npm run build",
+    "prepublishOnly" : "npm test && npm run lint",
+    "version" : "npm run format && git add -A src",
+    "postversion" : "git push && git push --tags",
+    "preversion" : "npm run lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://sebabenz@bitbucket.org/sebabenz/rampe.git"
+  },
+  "keywords": [
+    "AMP",
+    "BLOG"
+  ],
+  "author": "Sebastian Benz",
+  "license": "Apache-2.0",
+  "homepage": "https://bitbucket.org/sebabenz/rampe#readme",
+  "devDependencies": {
+    "highlight.js": "^9.13.1",
+    "marked": "^0.5.2",
+    "ncp": "^2.0.0",
+    "prettier": "^1.15.2",
+    "serve": "^10.1.1",
+    "swig-templates": "^2.0.3",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.16.0",
+    "typescript": "^3.1.6"
+  }
+}
