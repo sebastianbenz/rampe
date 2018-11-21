@@ -13,4 +13,12 @@ export class File extends Node {
     }
     return this._content;
   }
+
+  public children(): Promise<Node[]> {
+    return Promise.resolve([]);
+  }
+
+  public isFile() {
+    return true;
+  }
 }

@@ -1,12 +1,12 @@
 import log from './log';
-import { Directory } from './content/Directory';
+import { Content } from './content/Content';
 import { Config } from './Config';
 
 class Build {
-  content: any;
+  private readonly contents: Content;
 
   constructor(private config: Config) {
-    this.content = Directory.createRoot(config.dir.content);
+    this.contents = Content.create(config.dir.content);
   }
 
   public all(): void {
@@ -14,11 +14,13 @@ class Build {
     this.feed();
   }
   public feed(): void {
-    this.content.children();
     log.info('Building feed');
   }
-  public render(): void {
-    log.info('Building site');
+  public async render() {
+    for await (const node of this.contents.loop()) {
+      log.info('rendering ', node.path);
+      console.log(node.path)
+    }
   }
 }
 

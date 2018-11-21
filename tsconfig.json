@@ -6,6 +6,9 @@
     "outDir": "./dist",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "lib": [
+      "esnext"
+    ]
   }
 }

@@ -18,14 +18,12 @@ export class FileSystem {
     const nodes = files.filter(this.isSupported).map(
       (file): Node => {
         if (file.isDirectory()) {
-          console.log('new dir', file.name);
-          return new Directory(this, file.name);
+          return new Directory(this, join(path, file.name));
         }
         if (file.isFile()) {
-          console.log('new file', file.name);
-          return new File(this, file.name);
+          return new File(this, join(path, file.name));
         }
-        throw new Error(`Unsupported file type ${file}`);
+        throw new Error(`Unsupported file type ${file}. This should not happen.`);
       },
     );
     return nodes;
@@ -40,6 +38,9 @@ export class FileSystem {
       return true;
     }
     if (!file.isFile()) {
+      return false;
+    }
+    if (file.name.startsWith('.')) {
       return false;
     }
     return validExtensions.has(extname(file.name).substring(1));
