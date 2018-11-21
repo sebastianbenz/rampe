@@ -1,18 +1,6 @@
-import log from './log';
-log.verbose = true;
-log.info('info');
-log.warn('warn');
-log.error('error');
-log.debug('debug');
-log.debug('debug', { test: 'asdfasd' });
+import { Cli } from './Cli';
+import config from './config.json';
+import { Config } from './Config';
 
-import { Input } from './Input';
-
-const input = new Input('**/*.*');
-
-input.all().then(files => {
-  files.forEach(async f => {
-    log.info(f.path);
-    log.info(await f.content);
-  });
-});
+const cli = new Cli((config as unknown) as Config);
+cli.run();

@@ -4,6 +4,9 @@
   "description": "An AMP based static blogging engine.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "outside": "bin/rampe"
+  },
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",

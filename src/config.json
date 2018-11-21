@@ -1,3 +1,8 @@
 {
-    
+    "dir": {
+    "content": "content",
+    "dist": "public",
+    "templates": "templates"
+    },
+    "port": 8000
 }

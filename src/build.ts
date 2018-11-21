@@ -1,17 +1,24 @@
-import { Post } from './Post';
+import log from './log';
+import { Directory } from './content/Directory';
+import { Config } from './Config';
+
 class Build {
-  constructor(private config: {}) {}
+  content: any;
+
+  constructor(private config: Config) {
+    this.content = Directory.createRoot(config.dir.content);
+  }
 
   public all(): void {
-    const posts = Post.list(this.config);
-    this.render(posts);
-    this.feed(posts);
+    this.render();
+    this.feed();
   }
-  public feed(posts: Array<Promise<Post>>): void {
-    throw new Error('Method not implemented.');
+  public feed(): void {
+    this.content.children();
+    log.info('Building feed');
   }
-  public render(posts: Array<Promise<Post>>): void {
-    throw new Error('Method not implemented.');
+  public render(): void {
+    log.info('Building site');
   }
 }
 

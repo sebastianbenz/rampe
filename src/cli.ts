@@ -1,23 +1,28 @@
+import log from './log';
 import minimist from 'minimist';
 
 import Build from './build';
+import { Config } from './Config';
+import { serve } from './serve';
 import theConfig from './config.json';
 
-class Cli {
+export class Cli {
   private build: Build;
-  constructor(config: {}) {
+  constructor(private config: Config) {
     this.build = new Build(config);
   }
-  public run(argv = process.argv) {
+  public run(argv = process.argv.slice(2)) {
     const args = minimist(argv);
     const command = args._[0] || 'help';
     switch (command) {
       case 'build':
-        return this.build.all();
+        this.build.all();
+        break;
+      case 'serve':
+        serve(this.config.port);
+        break;
       default:
-        return Promise.reject(new Error(`"${command}" is not a valid command!`));
+        log.error(`"${command}" is not a valid command!`);
     }
   }
 }
-
-export default new Cli(theConfig);
