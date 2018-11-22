@@ -1,4 +1,4 @@
-import { readdir, readFile, Dirent, writeFile } from 'fs';
+import { readdirSync, readFileSync, Dirent, writeFile } from 'fs';
 import { promisify } from 'util';
 import { join, extname, dirname } from 'path';
 import { Node } from './Node';
@@ -6,18 +6,16 @@ import { File } from './File';
 import { Directory } from './Directory';
 import mkdirp from 'mkdirp';
 
-const mkdirpAsync = promisify(mkdirp);
-const readDirAsync = promisify(readdir);
-const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
+const mkdirpAsync = promisify(mkdirp);
 
 const validExtensions = new Set(['json', 'md', 'html']);
 
 export class FileSystem {
-  constructor(private rootDir: string) { }
+  constructor(private rootDir: string) {}
 
-  public async readDir(path: string): Promise<Node[]> {
-    const files = await readDirAsync(join(this.rootDir, path), { withFileTypes: true });
+  public readDir(path: string): Node[] {
+    const files = readdirSync(join(this.rootDir, path), { withFileTypes: true });
     const nodes = files.filter(this.isSupported).map(
       (file): Node => {
         if (file.isDirectory()) {
@@ -32,14 +30,13 @@ export class FileSystem {
     return nodes;
   }
 
-  public readFile(path: string): Promise<string> {
-    return readFileAsync(join(this.rootDir, path), 'utf-8');
+  public readFile(path: string): string {
+    return readFileSync(join(this.rootDir, path), 'utf-8');
   }
 
   public async writeFile(path: string, content: string) {
     const filePath = join(this.rootDir, path);
     await mkdirpAsync(dirname(filePath));
-    console.log('creating dir', dirname(filePath))
     return writeFileAsync(filePath, content, 'utf-8');
   }
 
@@ -55,5 +52,4 @@ export class FileSystem {
     }
     return validExtensions.has(extname(file.name).substring(1));
   }
-
 }

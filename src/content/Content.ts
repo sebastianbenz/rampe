@@ -6,10 +6,10 @@ export class Content {
   static create(rootDir: string): any {
     return new Content(Directory.createRoot(rootDir));
   }
-  constructor(private root: Node) {}
+  constructor(public readonly root: Node) {}
 
   //  [Symbol.asyncIterator]() {
-  public async *files(): AsyncIterableIterator<File> {
+  public *files(): IterableIterator<File> {
     const stack = [this.root];
     while (stack.length > 0) {
       const node = stack.pop();
@@ -19,7 +19,7 @@ export class Content {
       if (node.isFile()) {
         yield node as File;
       }
-      const children = await node.children();
+      const children = node.children;
       for (let i = 0; i < children.length; i++) {
         stack.push(children[i]);
       }

@@ -9,14 +9,18 @@ export abstract class Node {
 
   constructor(protected readonly fileSystem: FileSystem, public readonly path: string) {
     const parsedPath = parse(path);
-    this.ext = parsedPath.ext;
+    this.ext = parsedPath.ext ? parsedPath.ext.substring(1) : '';
     this.dir = parsedPath.dir;
     this.name = parsedPath.name;
   }
 
-  public abstract children(): Promise<Node[]>;
+  public abstract get children(): Node[];
 
   public isFile() {
     return false;
+  }
+
+  public get(path: string): Node[] {
+    return [];
   }
 }

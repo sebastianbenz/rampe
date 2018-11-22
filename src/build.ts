@@ -4,14 +4,14 @@ import { Content } from './content/Content';
 import { Config } from './Config';
 import { Output } from './Output';
 import { File } from './content/File';
-import swig from 'swig-templates';
-swig.setDefaults({ cache: false });
+import nunjucks from 'nunjucks';
 
 class Build {
   private readonly contents: Content;
 
   constructor(private config: Config) {
     this.contents = Content.create(config.dir.content);
+    nunjucks.configure(config.dir.templates, { autoescape: true });
   }
 
   public all(output: Output): void {
@@ -28,19 +28,24 @@ class Build {
     }
   }
 
-  private renderFile(output: Output, file: File) {
-    if (file.layout.length <= 0) {
+  private async renderFile(output: Output, file: File) {
+    if (file.layout === undefined) {
       log.warn('missing layout:', file.path);
       return;
     }
-    const config = this.config;
-    const templateFile = join(this.config.dir.templates, file.layout) + '.html';
-    const renderedFile = swig.renderFile(templateFile, {
-      config,
+    const templateFile = file.layout + '.html';
+    let renderedFile = '';
+    const locals = {
+      config: this.config,
       file,
-    });
+      content: this.contents.root,
+    };
+    if (file.ext === 'html') {
+      renderedFile = nunjucks.renderString(file.content, locals);
+    } else {
+      renderedFile = nunjucks.render(templateFile, locals);
+    }
     const outputPath = join(file.dir, file.name) + '.html';
-    log.info('rendering ', outputPath, renderedFile);
     output.add(outputPath, renderedFile);
   }
 }
