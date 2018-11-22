@@ -22,13 +22,14 @@ class Build {
     log.info('Building feed');
   }
 
-  public async render(output: Output) {
-    for await (const file of this.contents.files()) {
+  public render(output: Output) {
+    log.info('Building site');
+    for (const file of this.contents.files()) {
       this.renderFile(output, file);
     }
   }
 
-  private async renderFile(output: Output, file: File) {
+  private renderFile(output: Output, file: File) {
     if (file.layout === undefined) {
       log.warn('missing layout:', file.path);
       return;
@@ -45,7 +46,12 @@ class Build {
     } else {
       renderedFile = nunjucks.render(templateFile, locals);
     }
-    const outputPath = join(file.dir, file.name) + '.html';
+    let outputPath
+    if (file.name === 'index') {
+      outputPath = join(file.dir, file.name + '.html');
+    } else {
+      outputPath = join(file.dir, file.name, 'index.html');
+    }
     output.add(outputPath, renderedFile);
   }
 }

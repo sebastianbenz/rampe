@@ -1,5 +1,6 @@
 import { readFile } from 'fs';
 import { promisify } from 'util';
+import { join } from 'path';
 import { Node } from './Node';
 import marked from 'marked';
 import hljs from 'highlight.js';
@@ -21,15 +22,14 @@ marked.setOptions({
 const readFileAsync = promisify(readFile);
 
 export class File extends Node {
-  [key: string]: any;
+
+  public readonly url: string
+  public readonly layout: string | undefined
+  public readonly content: string
 
   constructor(protected readonly fileSystem: FileSystem, public readonly path: string) {
     super(fileSystem, path);
-    this.loadContent();
-    this.url = path;
-  }
-
-  private loadContent(): void {
+    this.url = join(this.dir, this.name)
     const fileString = this.fileSystem.readFile(this.path);
     switch (this.ext) {
       case 'json':
@@ -39,8 +39,9 @@ export class File extends Node {
       case 'html':
         this.content = fileString;
       case 'md':
-        this.addProperties(this.parseFrontMatter(fileString));
-        this.content = marked(fileString);
+        const segments = this.parseFrontMatter(fileString)
+        this.addProperties(segments.frontMatter);
+        this.content = marked(segments.content as string);
         break;
       default:
         throw new Error('Unsupported file type');
@@ -61,11 +62,13 @@ export class File extends Node {
       return {};
     }
     const frontMatterString = fileContent.substring(0, frontMatterEnd);
-    return yaml.safeLoad(frontMatterString);
+    return {
+      content: fileContent.substring(frontMatterEnd + FRONT_MATTER_END.length),
+      frontMatter: yaml.safeLoad(frontMatterString),
+    }
   }
 
   private addProperties(obj: {}) {
     Object.assign(this, obj);
-    console.log(this.path, this.layout);
   }
 }

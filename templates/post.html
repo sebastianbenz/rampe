@@ -1,9 +1,9 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1 class="mb0 mt3">{{ title }}</h1>
+<h1 class="mb0 mt3">{{ file.title }}</h1>
 <div class="mb4">
   {% include 'amp/amp-timeago.html' %}
 </div>
-{{ post.text|raw }}
+{{ file.content | safe }}
 {% endblock %}
