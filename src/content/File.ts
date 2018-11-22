@@ -7,6 +7,12 @@ const readFileAsync = promisify(readFile);
 export class File extends Node {
   private _content: Promise<string> | null = null;
 
+  get title() {
+    return 'The Title';
+  }
+  get layout() {
+    return 'index';
+  }
   get content(): Promise<string> {
     if (this._content == null) {
       this._content = this.fileSystem.readFile(this.path);

@@ -32,11 +32,13 @@
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
+    "@types/mkdirp": "^0.5.2",
     "@types/node": "^10.12.9",
     "glob": "^7.1.3",
     "highlight.js": "^9.13.1",
     "marked": "^0.5.2",
     "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "prettier": "^1.15.2",
     "serve": "^10.1.1",

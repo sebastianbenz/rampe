@@ -5,6 +5,7 @@ import Build from './build';
 import { Config } from './Config';
 import { serve } from './serve';
 import theConfig from './config.json';
+import { Output } from './Output';
 
 export class Cli {
   private build: Build;
@@ -13,10 +14,10 @@ export class Cli {
   }
   public run(argv = process.argv.slice(2)) {
     const args = minimist(argv);
-    const command = args._[0] || 'help';
+    const command = args._[0] || 'build';
     switch (command) {
       case 'build':
-        this.build.all();
+        this.build.all(Output.create(this.config.dir.dist));
         break;
       case 'serve':
         serve(this.config.port);
