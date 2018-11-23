@@ -1,8 +1,9 @@
 {
     "dir": {
-    "content": "content",
-    "dist": "public",
-    "templates": "templates"
+        "content": "content",
+        "assets": "assets",
+        "dist": "public",
+        "templates": "templates"
     },
     "port": 8000
 }

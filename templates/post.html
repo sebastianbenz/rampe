@@ -1,5 +1,11 @@
 {% extends 'layout.html' %}
 
+
+{% block extensions %}
+{{ super() }}
+<script async custom-element="amp-timeago" src="https://cdn.ampproject.org/v0/amp-timeago-0.1.js"></script>
+{% endblock %}
+
 {% block body %}
 <h1 class="mb0 mt3">{{ file.title }}</h1>
 <div class="mb4">

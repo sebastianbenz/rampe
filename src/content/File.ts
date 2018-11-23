@@ -22,14 +22,13 @@ marked.setOptions({
 const readFileAsync = promisify(readFile);
 
 export class File extends Node {
-
-  public readonly url: string
-  public readonly layout: string | undefined
-  public readonly content: string
+  public readonly url: string;
+  public readonly layout: string | undefined;
+  public readonly content: string;
 
   constructor(protected readonly fileSystem: FileSystem, public readonly path: string) {
     super(fileSystem, path);
-    this.url = join(this.dir, this.name)
+    this.url = join(this.dir, this.name);
     const fileString = this.fileSystem.readFile(this.path);
     switch (this.ext) {
       case 'json':
@@ -39,9 +38,9 @@ export class File extends Node {
       case 'html':
         this.content = fileString;
       case 'md':
-        const segments = this.parseFrontMatter(fileString)
+        const segments = this.parseFrontMatter(fileString);
         this.addProperties(segments.frontMatter);
-        this.content = marked(segments.content as string);
+        this.content = fileString ? marked(segments.content as string) : '';
         break;
       default:
         throw new Error('Unsupported file type');
@@ -59,13 +58,16 @@ export class File extends Node {
   private parseFrontMatter(fileContent: string) {
     const frontMatterEnd = fileContent.indexOf(FRONT_MATTER_END);
     if (frontMatterEnd === -1) {
-      return {};
+      return {
+        content: fileContent,
+        frontMatter: {},
+      };
     }
     const frontMatterString = fileContent.substring(0, frontMatterEnd);
     return {
       content: fileContent.substring(frontMatterEnd + FRONT_MATTER_END.length),
       frontMatter: yaml.safeLoad(frontMatterString),
-    }
+    };
   }
 
   private addProperties(obj: {}) {

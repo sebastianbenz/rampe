@@ -1,6 +1,6 @@
 class Log {
   private prefix: string;
-  constructor(private tag = '', public verbose = false, private output = console) {
+  constructor(private tag = '', public verbose: boolean = false, private output = console) {
     this.prefix = this.inverse(tag);
   }
 
@@ -20,9 +20,7 @@ class Log {
   }
 
   public error(message: string, ...args: any): void {
-    this.output.log('\n');
     this.log(this.red('ERROR ' + message), args);
-    this.output.log('\n');
   }
 
   private log(message: string, args: any) {

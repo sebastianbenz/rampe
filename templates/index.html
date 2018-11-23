@@ -1,5 +1,10 @@
 {% extends 'layout.html' %}
 
+{% block extensions %}
+{{ super() }}
+<script async custom-element="amp-timeago" src="https://cdn.ampproject.org/v0/amp-timeago-0.1.js"></script>
+{% endblock %}
+
 {% block body %}
 {% for post in content.get('posts') %}
 <div class="card">

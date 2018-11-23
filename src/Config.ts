@@ -4,6 +4,7 @@ export interface Config {
 }
 
 interface Directories {
+  assets: string;
   templates: string;
   content: string;
   dist: string;
