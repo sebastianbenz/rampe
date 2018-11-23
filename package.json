@@ -30,6 +30,7 @@
   "license": "Apache-2.0",
   "homepage": "https://bitbucket.org/sebabenz/rampe#readme",
   "devDependencies": {
+    "@sindresorhus/slugify": "^0.6.0",
     "@types/amphtml-validator": "^1.0.0",
     "@types/chokidar": "^1.7.5",
     "@types/glob": "^7.1.1",

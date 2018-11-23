@@ -8,5 +8,6 @@
     "optimizer": {
         "ampUrl": "amp"
     },
-    "port": 8000
+    "port": 8000,
+    "defaultLayout": "post"
 }

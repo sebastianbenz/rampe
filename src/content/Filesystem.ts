@@ -12,7 +12,7 @@ const mkdirpAsync = promisify(mkdirp);
 const validExtensions = new Set(['json', 'md', 'html']);
 
 export class FileSystem {
-  constructor(private rootDir: string) {}
+  constructor(private rootDir='') {}
 
   public readDir(path: string): Node[] {
     const files = readdirSync(join(this.rootDir, path), { withFileTypes: true });

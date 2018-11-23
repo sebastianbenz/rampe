@@ -1,4 +1,5 @@
 export interface Config {
+  defaultLayout: 'post';
   dir: Directories;
   optimizer: Optimizer;
   port: number;

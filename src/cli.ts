@@ -3,8 +3,10 @@ import minimist from 'minimist';
 import chokidar from 'chokidar';
 
 import Build from './build';
+import { FileSystem } from './content/Filesystem';
 import { Config } from './Config';
 import { serve } from './serve';
+import { createContent } from './create';
 import { Pipeline } from './output/Pipeline';
 
 export class Cli {
@@ -16,9 +18,19 @@ export class Cli {
     const args = minimist(argv);
     const command = args._[0] || 'build';
     log.verbose = args.verbose;
+    log.debug('test', args)
     switch (command) {
       case 'build':
         this.buildAll();
+        break;
+      case 'create':
+        const title = args._[1];
+        if (!title) {
+          log.error('title missing')
+          return;
+        }
+        const dir = args.d || args.dir || '';
+        createContent(new FileSystem(), title, dir, this.config)
         break;
       case 'serve':
         serve(this.config.port);
