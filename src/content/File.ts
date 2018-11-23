@@ -25,10 +25,11 @@ export class File extends Node {
   public readonly url: string;
   public readonly layout: string | undefined;
   public readonly content: string;
+  public readonly validate = true;
 
   constructor(protected readonly fileSystem: FileSystem, public readonly path: string) {
     super(fileSystem, path);
-    this.url = join(this.dir, this.name);
+    this.url = '/' + join(this.dir, this.name);
     const fileString = this.fileSystem.readFile(this.path);
     switch (this.ext) {
       case 'json':

@@ -8,6 +8,9 @@ export async function validate(pipeline: Pipeline, file: TargetFile): Promise<Ta
   if (!(await file.isAmp)) {
     return file;
   }
+  if (!file.source.validate) {
+    return file
+  }
   const validator = await amphtmlValidator.getInstance();
   const result = validator.validateString(file.content);
   if (result.status !== 'PASS') {

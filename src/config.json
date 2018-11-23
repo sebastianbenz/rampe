@@ -5,5 +5,8 @@
         "dist": "public",
         "templates": "templates"
     },
+    "optimizer": {
+        "ampUrl": "amp"
+    },
     "port": 8000
 }

@@ -10,7 +10,7 @@ import { Pipeline } from './output/Pipeline';
 export class Cli {
   private output: Pipeline;
   constructor(private config: Config) {
-    this.output = Pipeline.create(this.config.dir.dist);
+    this.output = Pipeline.create(this.config);
   }
   public run(argv = process.argv.slice(2)) {
     const args = minimist(argv);

@@ -9,7 +9,7 @@ export class TargetFile {
 
   public isAmp: Promise<boolean>;
 
-  constructor(public readonly path: string, public readonly content: string, public readonly source: File) {
+  constructor(public path: string, public content: string, public readonly source: File) {
     this.isAmp = isAmp(content);
   }
 }
