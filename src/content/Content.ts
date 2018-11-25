@@ -25,4 +25,21 @@ export class Content {
       }
     }
   }
+
+  public *directories(): IterableIterator<Directory> {
+    const stack = [this.root];
+    while (stack.length > 0) {
+      const node = stack.pop();
+      if (node == null) {
+        return;
+      }
+      if (node instanceof Directory) {
+        yield node as Directory;
+      }
+      const children = node.children;
+      for (let i = 0; i < children.length; i++) {
+        stack.push(children[i]);
+      }
+    }
+  }
 }

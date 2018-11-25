@@ -8,6 +8,14 @@
     "optimizer": {
         "ampUrl": "amp"
     },
+    "author": {
+        "name": "Sebastian Benz",
+        "email": "sebastian.benz+blog@gmail.com",
+        "link": "https://sebastianbenz.de"
+    },
     "port": 8000,
-    "defaultLayout": "post"
+    "host": "http://sebastianbenz.de",
+    "favicon": "favicon.ico",
+    "defaultLayout": "post",
+    "copyright": "All rights reserved 2018, Sebastian Benz"
 }

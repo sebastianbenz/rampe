@@ -23,6 +23,10 @@ const readFileAsync = promisify(readFile);
 
 export class File extends Node {
   public readonly url: string;
+  public readonly title='' ;
+  public readonly description='';
+  public readonly image='';
+  public readonly date=new Date();
   public readonly layout: string | undefined;
   public readonly content: string;
   public readonly validate = true;

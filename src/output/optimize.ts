@@ -6,6 +6,7 @@ import log from '../log';
 
 import ampOptimizer from 'amp-toolbox-optimizer'
 import runtimeVersion from 'amp-toolbox-runtime-version';
+import { File } from '../content/File';
 
 const AMP_PATH = 'amp'
 
@@ -15,7 +16,7 @@ export async function optimize(pipeline: Pipeline, file: TargetFile, config: Con
   }
   const canonicalPath = file.path
   file.path = join(dirname(canonicalPath), (config.optimizer.ampUrl || 'amp'), 'index.html')
-  const ampUrl = join(file.source.url, (config.optimizer.ampUrl || 'amp'));
+  const ampUrl = join((file.source as File).url, (config.optimizer.ampUrl || 'amp'));
   const ampRuntimeVersion = await runtimeVersion.currentVersion();
 
   const optimizedContent = await ampOptimizer.transformHtml(file.content, {

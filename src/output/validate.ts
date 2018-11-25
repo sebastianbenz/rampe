@@ -3,12 +3,13 @@ import { TargetFile } from './TargetFile';
 import log from '../log';
 
 import amphtmlValidator from 'amphtml-validator';
+import { File } from '../content/File';
 
 export async function validate(pipeline: Pipeline, file: TargetFile): Promise<TargetFile> {
   if (!(await file.isAmp)) {
     return file;
   }
-  if (!file.source.validate) {
+  if (file.source.isFile() && !(file.source as File).validate) {
     return file
   }
   const validator = await amphtmlValidator.getInstance();
