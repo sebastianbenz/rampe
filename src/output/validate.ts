@@ -1,6 +1,6 @@
+import { log } from '../log';
 import { Pipeline } from './Pipeline';
 import { TargetFile } from './TargetFile';
-import log from '../log';
 
 import amphtmlValidator from 'amphtml-validator';
 import { File } from '../content/File';
@@ -18,8 +18,7 @@ export async function validate(pipeline: Pipeline, file: TargetFile): Promise<Ta
     log.error('validation for', file.path, result.status);
   }
   let hasError = false;
-  for (let i = 0; i < result.errors.length; i++) {
-    const error = result.errors[i];
+  for (const error of result.errors) {
     let msg = 'line ' + error.line + ', col ' + error.col + ': ' + error.message;
     if (error.specUrl !== null) {
       msg += ' (see ' + error.specUrl + ')';

@@ -1,25 +1,26 @@
-class Log {
+/* tslint:disable:no-any */
+export class Log {
   private prefix: string;
-  constructor(private tag = '', public verbose: boolean = false, private output = console) {
+  constructor(private tag = '', public verbose = false, private output = console) {
     this.prefix = this.inverse(tag);
   }
 
-  public debug(message: string, ...args: any): void {
+  debug(message: string, ...args: any): void {
     if (!this.verbose) {
       return;
     }
     this.log(this.dim(message), args);
   }
 
-  public info(message: string, ...args: any): void {
+  info(message: string, ...args: any): void {
     this.log(message, args);
   }
 
-  public warn(message: string, ...args: any): void {
+  warn(message: string, ...args: any): void {
     this.log(this.yellow('WARNING ' + message), args);
   }
 
-  public error(message: string, ...args: any): void {
+  error(message: string, ...args: any): void {
     this.log(this.red('ERROR ' + message), args);
   }
 
@@ -51,4 +52,4 @@ class Log {
   }
 }
 
-export default new Log('Rampe');
+export const log = new Log('Rampe');

@@ -1,15 +1,15 @@
+import { Directory } from './Directory';
 import { File } from './File';
 import { Node } from './Node';
-import { Directory } from './Directory';
 
 export class Content {
-  static create(rootDir: string): any {
+  static create(rootDir: string): Content {
     return new Content(Directory.createRoot(rootDir));
   }
-  constructor(public readonly root: Node) {}
+  constructor(readonly root: Node) {}
 
   //  [Symbol.asyncIterator]() {
-  public *files(): IterableIterator<File> {
+  *files(): IterableIterator<File> {
     const stack = [this.root];
     while (stack.length > 0) {
       const node = stack.pop();
@@ -20,13 +20,13 @@ export class Content {
         yield node as File;
       }
       const children = node.children;
-      for (let i = 0; i < children.length; i++) {
-        stack.push(children[i]);
+      for (const child of children) {
+        stack.push(child);
       }
     }
   }
 
-  public *directories(): IterableIterator<Directory> {
+  *directories(): IterableIterator<Directory> {
     const stack = [this.root];
     while (stack.length > 0) {
       const node = stack.pop();
@@ -37,8 +37,8 @@ export class Content {
         yield node as Directory;
       }
       const children = node.children;
-      for (let i = 0; i < children.length; i++) {
-        stack.push(children[i]);
+      for (const child of children) {
+        stack.push(child);
       }
     }
   }

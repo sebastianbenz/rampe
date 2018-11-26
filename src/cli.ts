@@ -1,20 +1,20 @@
-import log from './log';
-import minimist from 'minimist';
 import chokidar from 'chokidar';
+import minimist from 'minimist';
+import { log } from './log';
 
-import Build from './build';
-import { FileSystem } from './content/Filesystem';
+import { Build } from './build';
 import { Config } from './Config';
-import { serve } from './serve';
+import { FileSystem } from './content/Filesystem';
 import { createContent } from './create';
 import { Pipeline } from './output/Pipeline';
+import { serve } from './serve';
 
 export class Cli {
   private output: Pipeline;
   constructor(private config: Config) {
     this.output = Pipeline.create(this.config);
   }
-  public async run(argv = process.argv.slice(2)) {
+  async run(argv = process.argv.slice(2)) {
     const args = minimist(argv);
     const command = args._[0] || 'build';
     log.verbose = args.verbose;
@@ -56,8 +56,8 @@ export class Cli {
   watch() {
     log.info('waiting for changes ');
     const opts = {
-      ignored: /(^|[\/\\])\../,
       ignoreInitial: true,
+      ignored: /(^|[\/\\])\../,
     };
     chokidar.watch(this.config.dir.assets, opts).on('all', (event, path) => {
       log.debug('new event', event, path);

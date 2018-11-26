@@ -1,9 +1,9 @@
-import { Config } from './Config';
-import { FileSystem } from './content/Filesystem';
 import slugify from '@sindresorhus/slugify';
 import { join } from 'path';
-import log from './log';
+import { Config } from './Config';
 import { DATE_STRING_LENGTH } from './content/File';
+import { FileSystem } from './content/Filesystem';
+import { log } from './log';
 
 export function createContent(fileSystem: FileSystem, title: string, dir: string, config: Config) {
   const date = new Date().toISOString().substring(0, DATE_STRING_LENGTH);

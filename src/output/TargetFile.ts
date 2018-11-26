@@ -1,6 +1,5 @@
 import { File } from '../content/File';
 import { isAmp } from '../amp/AmpHelper';
-import log from '../log';
 import { Node } from '../content/Node';
 
 export class TargetFile {
@@ -8,9 +7,9 @@ export class TargetFile {
     return new TargetFile(path, content, source);
   }
 
-  public isAmp: Promise<boolean>;
+  isAmp: Promise<boolean>;
 
-  constructor(public path: string, public content: string, public readonly source: Node) {
+  constructor(public path: string, public content: string, readonly source: Node) {
     this.isAmp = isAmp(content);
   }
 }

@@ -1,8 +1,8 @@
+import { dirname, join } from 'path';
+import { Config } from '../Config';
+import { log } from '../log';
 import { Pipeline } from './Pipeline';
 import { TargetFile } from './TargetFile';
-import { Config } from '../Config';
-import { join, dirname } from 'path';
-import log from '../log';
 
 import ampOptimizer from 'amp-toolbox-optimizer';
 import runtimeVersion from 'amp-toolbox-runtime-version';
@@ -20,8 +20,8 @@ export async function optimize(pipeline: Pipeline, file: TargetFile, config: Con
   const ampRuntimeVersion = await runtimeVersion.currentVersion();
 
   const optimizedContent = await ampOptimizer.transformHtml(file.content, {
-    ampUrl,
     ampRuntimeVersion,
+    ampUrl,
     imageBasePath: config.optimizer.imageBasePath || config.dir.assets,
   });
   const optimized = TargetFile.create(canonicalPath, optimizedContent, file.source);

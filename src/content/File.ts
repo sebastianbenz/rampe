@@ -1,12 +1,12 @@
 import { readFile } from 'fs';
-import { promisify } from 'util';
-import { join, extname } from 'path';
-import { Node } from './Node';
-import marked from 'marked';
 import hljs from 'highlight.js';
 import yaml from 'js-yaml';
+import marked from 'marked';
+import { extname, join } from 'path';
+import { promisify } from 'util';
+import { log } from '../log';
 import { FileSystem } from './Filesystem';
-import log from '../log';
+import { Node } from './Node';
 
 const FRONT_MATTER_END = '---';
 export const DATE_STRING_LENGTH = '2018-11-26T09:59'.length;
@@ -25,20 +25,20 @@ marked.setOptions({
 const readFileAsync = promisify(readFile);
 
 export class File extends Node {
-  static isSupported(fileName: string): any {
+  static isSupported(fileName: string) {
     return VALID_EXTENSIONS.has(extname(fileName));
   }
 
-  public readonly url: string;
-  public readonly title = '';
-  public readonly description = '';
-  public readonly image = '';
-  public readonly date: Date;
-  public readonly layout: string | undefined;
-  public readonly content: string;
-  public readonly validate = true;
+  readonly url: string;
+  readonly title = '';
+  readonly description = '';
+  readonly image = '';
+  readonly date: Date;
+  readonly layout: string | undefined;
+  readonly content: string;
+  readonly validate = true;
 
-  constructor(protected readonly fileSystem: FileSystem, public readonly path: string) {
+  constructor(protected readonly fileSystem: FileSystem, readonly path: string) {
     super(fileSystem, path);
     this.url = '/' + join(this.dir, this.name);
     const fileString = this.fileSystem.readFile(path);
@@ -60,11 +60,11 @@ export class File extends Node {
     }
   }
 
-  public get children() {
+  get children() {
     return [];
   }
 
-  public isFile() {
+  isFile() {
     return true;
   }
 

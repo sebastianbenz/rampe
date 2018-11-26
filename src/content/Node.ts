@@ -1,26 +1,26 @@
 import { basename } from 'path';
-import { FileSystem } from './Filesystem';
 import { parse } from 'path';
+import { FileSystem } from './Filesystem';
 
 export abstract class Node {
-  public readonly ext: string;
-  public readonly dir: string;
-  public readonly name: string;
+  readonly ext: string;
+  readonly dir: string;
+  readonly name: string;
 
-  constructor(protected readonly fileSystem: FileSystem, public readonly path: string) {
+  constructor(protected readonly fileSystem: FileSystem, readonly path: string) {
     const parsedPath = parse(path);
     this.ext = parsedPath.ext ? parsedPath.ext.substring(1) : '';
     this.dir = parsedPath.dir;
     this.name = parsedPath.name;
   }
 
-  public abstract get children(): Node[];
+  abstract get children(): Node[];
 
-  public isFile() {
+  isFile() {
     return false;
   }
 
-  public get(path: string): Node[] {
+  get(path: string): Node[] {
     return [];
   }
 }
