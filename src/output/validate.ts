@@ -10,12 +10,12 @@ export async function validate(pipeline: Pipeline, file: TargetFile): Promise<Ta
     return file;
   }
   if (file.source.isFile() && !(file.source as File).validate) {
-    return file
+    return file;
   }
   const validator = await amphtmlValidator.getInstance();
   const result = validator.validateString(file.content);
   if (result.status !== 'PASS') {
-     log.error('validation for', file.path, result.status);
+    log.error('validation for', file.path, result.status);
   }
   let hasError = false;
   for (let i = 0; i < result.errors.length; i++) {

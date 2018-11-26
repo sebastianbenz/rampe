@@ -14,11 +14,10 @@ export class Cli {
   constructor(private config: Config) {
     this.output = Pipeline.create(this.config);
   }
-  public run(argv = process.argv.slice(2)) {
+  public async run(argv = process.argv.slice(2)) {
     const args = minimist(argv);
     const command = args._[0] || 'build';
     log.verbose = args.verbose;
-    log.debug('test', args)
     switch (command) {
       case 'build':
         this.buildAll();
@@ -26,17 +25,17 @@ export class Cli {
       case 'create':
         const title = args._[1];
         if (!title) {
-          log.error('title missing')
+          log.error('title missing');
           return;
         }
         const dir = args.d || args.dir || '';
-        createContent(new FileSystem(), title, dir, this.config)
+        createContent(new FileSystem(), title, dir, this.config);
         break;
       case 'serve':
         serve(this.config.port);
         break;
       case 'watch':
-        this.buildAll();
+        await this.buildAll();
         serve(this.config.port);
         this.watch();
         break;
@@ -45,9 +44,13 @@ export class Cli {
     }
   }
 
-  buildAll() {
+  async buildAll() {
     const build = new Build(this.config);
-    build.all(this.output);
+    try {
+      await build.all(this.output);
+    } catch (err) {
+      log.error('Build failed', err);
+    }
   }
 
   watch() {
@@ -58,14 +61,22 @@ export class Cli {
     };
     chokidar.watch(this.config.dir.assets, opts).on('all', (event, path) => {
       log.debug('new event', event, path);
-      const build = new Build(this.config);
-      build.copyAssets();
+      try {
+        const build = new Build(this.config);
+        build.copyAssets();
+      } catch (err) {
+        log.error('Build failed', err);
+      }
     });
-    chokidar.watch([this.config.dir.templates, this.config.dir.content], opts).on('all', (event, path) => {
+    chokidar.watch([this.config.dir.templates, this.config.dir.content], opts).on('all', async (event, path) => {
       log.debug('new event', event, path);
-      const build = new Build(this.config);
-      build.render(this.output);
-      build.feed(this.output);
+      try {
+        const build = new Build(this.config);
+        await build.render(this.output);
+        build.feed(this.output);
+      } catch (err) {
+        log.error('Build failed', err);
+      }
     });
   }
 }

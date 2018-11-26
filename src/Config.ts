@@ -9,10 +9,9 @@ export interface Config {
   port: number;
 }
 interface Author {
-  name: string,
-  email?: string,
-  link?: string,
-
+  name: string;
+  email?: string;
+  link?: string;
 }
 interface Optimizer {
   ampUrl: string;

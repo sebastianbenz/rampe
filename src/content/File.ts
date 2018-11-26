@@ -1,13 +1,16 @@
 import { readFile } from 'fs';
 import { promisify } from 'util';
-import { join } from 'path';
+import { join, extname } from 'path';
 import { Node } from './Node';
 import marked from 'marked';
 import hljs from 'highlight.js';
 import yaml from 'js-yaml';
 import { FileSystem } from './Filesystem';
+import log from '../log';
 
 const FRONT_MATTER_END = '---';
+export const DATE_STRING_LENGTH = '2018-11-26T09:59'.length;
+const VALID_EXTENSIONS = new Set(['.json', '.md', '.html']);
 
 marked.setOptions({
   highlight: (code, lang) => {
@@ -22,11 +25,15 @@ marked.setOptions({
 const readFileAsync = promisify(readFile);
 
 export class File extends Node {
+  static isSupported(fileName: string): any {
+    return VALID_EXTENSIONS.has(extname(fileName));
+  }
+
   public readonly url: string;
-  public readonly title='' ;
-  public readonly description='';
-  public readonly image='';
-  public readonly date=new Date();
+  public readonly title = '';
+  public readonly description = '';
+  public readonly image = '';
+  public readonly date: Date;
   public readonly layout: string | undefined;
   public readonly content: string;
   public readonly validate = true;
@@ -34,18 +41,19 @@ export class File extends Node {
   constructor(protected readonly fileSystem: FileSystem, public readonly path: string) {
     super(fileSystem, path);
     this.url = '/' + join(this.dir, this.name);
-    const fileString = this.fileSystem.readFile(this.path);
+    const fileString = this.fileSystem.readFile(path);
+    this.date = this.initDate(path);
     switch (this.ext) {
       case 'json':
-        this.addProperties(JSON.parse(fileString));
         this.content = '';
+        this.addProperties(JSON.parse(fileString));
         break;
       case 'html':
         this.content = fileString;
       case 'md':
         const segments = this.parseFrontMatter(fileString);
-        this.addProperties(segments.frontMatter);
         this.content = fileString ? marked(segments.content as string) : '';
+        this.addProperties(segments.frontMatter);
         break;
       default:
         throw new Error('Unsupported file type');
@@ -77,5 +85,15 @@ export class File extends Node {
 
   private addProperties(obj: {}) {
     Object.assign(this, obj);
+  }
+
+  private initDate(fileName: string) {
+    const dateString = fileName.substring(0, DATE_STRING_LENGTH);
+    const timestamp = Date.parse(dateString);
+    if (isNaN(timestamp)) {
+      log.debug('No valid date', this.path);
+      return new Date();
+    }
+    return new Date(timestamp);
   }
 }

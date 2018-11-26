@@ -17,41 +17,55 @@ const ncpAsync = promisify(ncp);
 
 class Build {
   private readonly contents: Content;
+  private readonly env: nunjucks.Environment;
 
   constructor(private config: Config) {
     this.contents = Content.create(config.dir.content);
-    nunjucks.configure(config.dir.templates, { autoescape: true });
+    this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(this.config.dir.templates));
+
+    this.env.addFilter('dateFormat', (date: Date) => {
+      if (date === undefined || !(date instanceof Date)) {
+        return '';
+      }
+      return date.toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    });
   }
 
-  public all(output: Pipeline): void {
-    this.render(output);
+  public async all(output: Pipeline) {
+    await this.render(output);
     this.feed(output);
     this.copyAssets();
   }
+
   public feed(output: Pipeline): void {
     log.info('Building feed');
-
     for (const dir of this.contents.directories()) {
-      this.feedForDirectory(dir, output)
+      this.feedForDirectory(dir, output);
     }
-
   }
 
   public render(output: Pipeline) {
     log.info('Building site');
+    const result: Promise<void>[] = [];
     for (const file of this.contents.files()) {
-      this.renderFile(output, file);
+      result.push(this.renderFile(output, file));
     }
+    return Promise.all(result);
   }
 
   public copyAssets() {
     return ncpAsync(this.config.dir.assets, this.config.dir.dist);
   }
 
-  private renderFile(output: Pipeline, file: File) {
-    if (file.layout === undefined) {
+  private renderFile(output: Pipeline, file: File): Promise<void> {
+    if (file.layout === undefined && file.ext !== 'html') {
       log.warn('missing layout:', file.path);
-      return;
+      return Promise.resolve();
     }
     const templateFile = file.layout + '.html';
     let renderedFile = '';
@@ -61,17 +75,18 @@ class Build {
       content: this.contents.root,
     };
     if (file.ext === 'html') {
-      renderedFile = nunjucks.renderString(file.content, locals);
+      renderedFile = this.env.renderString(file.content, locals);
     } else {
-      renderedFile = nunjucks.render(templateFile, locals);
+      renderedFile = this.env.render(templateFile, locals);
     }
+    console.log('result', renderedFile);
     let outputPath;
     if (file.name === 'index') {
       outputPath = join(file.dir, file.name + '.html');
     } else {
       outputPath = join(file.dir, file.name, 'index.html');
     }
-    output.add(TargetFile.create(outputPath, renderedFile, file));
+    return output.add(TargetFile.create(outputPath, renderedFile, file));
   }
 
   private feedForDirectory(dir: Directory, output: Pipeline) {
@@ -79,18 +94,18 @@ class Build {
     const feedOptions = {
       image: join(this.config.host, 'feed.png'),
       favicon: join(this.config.host, this.config.favicon),
-      title: "Feed Title",
-      description: "Feed Description",
-      category: "Feed Category",
+      title: 'Feed Title',
+      description: 'Feed Description',
+      category: 'Feed Category',
       links: {
         json: 'feed.json',
         atom: 'atom.xml',
         rss: 'rss.xml',
-      }
-    }
+      },
+    };
     const feed = new Feed({
-      title: "Feed Title",
-      description: "This is my personal feed!",
+      title: 'Feed Title',
+      description: 'This is my personal feed!',
       id: link,
       link,
       feed: '',
@@ -106,32 +121,42 @@ class Build {
         name: this.config.author.name,
         email: this.config.author.email,
         link: this.config.author.link,
-      }
+      },
     });
 
-    dir.children.filter(child => child.isFile()).forEach(child => {
-      const feedItem = child as File
-      feed.addItem({
-        title: feedItem.title,
-        id: feedItem.url,
-        link: feedItem.url,
-        description: feedItem.description,
-        content: feedItem.content,
-        author: [{
-          name: this.config.author.name,
-          email: this.config.author.email,
-          link: this.config.author.link,
-        }],
-        date: feedItem.date,
-        image: feedItem.image
+    dir.children
+      .filter(child => child.isFile())
+      .forEach(child => {
+        const feedItem = child as File;
+        feed.addItem({
+          title: feedItem.title,
+          id: feedItem.url,
+          link: feedItem.url,
+          description: feedItem.description,
+          content: feedItem.content,
+          author: [
+            {
+              name: this.config.author.name,
+              email: this.config.author.email,
+              link: this.config.author.link,
+            },
+          ],
+          date: feedItem.date,
+          image: feedItem.image,
+        });
       });
-    });
 
     feed.addCategory(feedOptions.category);
 
-    output.add(TargetFile.create(join(dir.path, feedOptions.links.json), feed.json1(), dir))
-    output.add(TargetFile.create(join(dir.path, feedOptions.links.atom), feed.atom1(), dir))
-    output.add(TargetFile.create(join(dir.path, feedOptions.links.rss), feed.rss2(), dir))
+    const feedOutputs = [
+      { format: feedOptions.links.json, generator: feed.json1 },
+      { format: feedOptions.links.atom, generator: feed.atom1 },
+      { format: feedOptions.links.rss, generator: feed.rss2 },
+    ].forEach(feedOuput => {
+      const feedPath = join(dir.path, feedOuput.format);
+      log.debug('Generating feed: ', feedPath);
+      output.add(TargetFile.create(feedPath, feedOuput.generator(), dir));
+    });
   }
 }
 

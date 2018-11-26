@@ -1,1 +1,3 @@
-<amp-timeago class="block" layout="fixed" width="160" height="24" datetime="date" locale="en"></amp-timeago>
+<amp-timeago class="block" layout="fixed-height" height="24" datetime="{{ file.date.toISOString() }}" locale="en">
+  {{ file.date|dateFormat }}
+</amp-timeago>
