@@ -29,13 +29,13 @@ export class File extends Node {
     return VALID_EXTENSIONS.has(extname(fileName));
   }
 
-  readonly url: string;
-  readonly title = '';
+  readonly content: string;
+  readonly date: Date;
   readonly description = '';
   readonly image = '';
-  readonly date: Date;
   readonly layout: string | undefined;
-  readonly content: string;
+  readonly url: string;
+  readonly title = '';
   readonly validate = true;
 
   constructor(protected readonly fileSystem: FileSystem, readonly path: string) {
@@ -77,9 +77,13 @@ export class File extends Node {
       };
     }
     const frontMatterString = fileContent.substring(0, frontMatterEnd);
+    const frontMatterProperties = yaml.safeLoad(frontMatterString);
+    if (frontMatterProperties.date !== undefined) {
+      frontMatterProperties.date = this.parseDate(frontMatterProperties.date);
+    }
     return {
       content: fileContent.substring(frontMatterEnd + FRONT_MATTER_END.length),
-      frontMatter: yaml.safeLoad(frontMatterString),
+      frontMatter: frontMatterProperties,
     };
   }
 
@@ -89,9 +93,15 @@ export class File extends Node {
 
   private initDate(fileName: string) {
     const dateString = fileName.substring(0, DATE_STRING_LENGTH);
+    return this.parseDate(dateString);
+  }
+
+  private parseDate(dateString: string, showErrorIfInvalid=false) {
     const timestamp = Date.parse(dateString);
     if (isNaN(timestamp)) {
-      log.debug('No valid date', this.path);
+      if (showErrorIfInvalid) {
+        log.error('No valid date', this.path);
+      }
       return new Date();
     }
     return new Date(timestamp);

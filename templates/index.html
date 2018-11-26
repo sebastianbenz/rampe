@@ -9,6 +9,7 @@
 {% for post in content.get('posts') %}
 <div class="card">
   <a class="h3" href="{{ post.url }}">{{ post.title }}</a>
+  {% set date = post.date %}
   {% include 'amp/amp-timeago.html' %}
 
   <div>{{ post.description }}</div>

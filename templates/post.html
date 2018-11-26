@@ -9,6 +9,7 @@
 {% block body %}
 <h1 class="mb0 mt3">{{ file.title }}</h1>
 <div class="mb4">
+  {% set date = file.date %}
   {% include 'amp/amp-timeago.html' %}
 </div>
 {{ file.content | safe }}
