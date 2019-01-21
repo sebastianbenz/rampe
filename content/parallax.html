@@ -1,0 +1,89 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title>Parallax Homescreen</title>
+  <link rel="canonical" href="." />
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+  <meta name="theme-color" content="#333">
+  <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-element="amp-orientation-observer" src="https://cdn.ampproject.org/v0/amp-orientation-observer-0.1.js"></script>
+  <script async custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js"></script>
+  <style amp-custom>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      .title {
+        position: fixed;
+        left: 0;
+        right: 0;
+        padding: 0;
+        margin-top: 40vh;
+        font-size: 100px;
+        color: white;
+        z-index: 100;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.05);
+        text-transform: uppercase;
+        letter-spacing: 0.2;
+        font-weight: 100;
+      }
+      #background {
+        position: fixed;
+        top: -10%;
+        bottom: -10%;
+        left: -10%;
+        right: -10%;
+        pointer-events: none;
+      }
+      #background img {
+        object-fit: cover;
+      }
+    </style>
+</head>
+<body>
+  <div id="background">
+    <amp-img id="image" src="https://cdn.glitch.com/be50e41a-4d60-4df0-be43-66fc044e3984%2Fmats.jpg?1545310471797" layout="responsive" width="1442" height="1920"></amp-img>
+  </div>
+  <h1 class="title">Mats</h1>
+  <amp-orientation-observer alpha-range="0 360" 
+                            on="gamma:parallaxTransitionX.seekTo(percent=event.percent);
+                                beta:parallaxTransitionY.seekTo(percent=event.percent)" 
+                            layout="nodisplay">
+  </amp-orientation-observer>
+  <amp-animation id="parallaxTransitionX" layout="nodisplay">
+    <script type="application/json">
+      {
+        "duration": "15s",
+        "fill": "both",
+        "animations": [{
+          "selector": "#background",
+          "keyframes": [{
+            "transform": "translateX(-10%)"
+          }]
+        }]
+      }
+    </script>
+  </amp-animation>
+<amp-animation id="parallaxTransitionY" layout="nodisplay">
+    <script type="application/json">
+      {
+        "duration": "4s",
+        "fill": "both",
+        "animations": [{
+          "selector": "#image",
+          "keyframes": [{
+            "transform": "translateY(-10%)"
+          }]
+        }]
+      }
+    </script>
+  </amp-animation>
+</body>
+</html>

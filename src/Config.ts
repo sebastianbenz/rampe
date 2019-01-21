@@ -7,6 +7,7 @@ export interface Config {
   dir: Directories;
   optimizer: Optimizer;
   port: number;
+  verbose: boolean;
 }
 interface Author {
   name: string;

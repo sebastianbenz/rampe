@@ -10,6 +10,10 @@ export class TargetFile {
   isAmp: Promise<boolean>;
 
   constructor(public path: string, public content: string, readonly source: Node) {
-    this.isAmp = isAmp(content);
+    if (!path.endsWith('.html')) {
+      this.isAmp = Promise.resolve(false);
+    } else {
+      this.isAmp = isAmp(content);
+    }
   }
 }

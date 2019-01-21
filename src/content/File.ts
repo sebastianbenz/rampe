@@ -79,7 +79,7 @@ export class File extends Node {
     const frontMatterString = fileContent.substring(0, frontMatterEnd);
     const frontMatterProperties = yaml.safeLoad(frontMatterString);
     if (frontMatterProperties.date !== undefined) {
-      frontMatterProperties.date = this.parseDate(frontMatterProperties.date);
+      frontMatterProperties.date = this.parseDate(frontMatterProperties.date, true);
     }
     return {
       content: fileContent.substring(frontMatterEnd + FRONT_MATTER_END.length),
@@ -98,12 +98,13 @@ export class File extends Node {
 
   private parseDate(dateString: string, showErrorIfInvalid=false) {
     const timestamp = Date.parse(dateString);
-    if (isNaN(timestamp)) {
-      if (showErrorIfInvalid) {
-        log.error('No valid date', this.path);
-      }
-      return new Date();
+    if (!isNaN(timestamp)) {
+      return new Date(timestamp);
     }
-    return new Date(timestamp);
+    if (showErrorIfInvalid) {
+      log.error('Invalid date', dateString, this.path);
+    }
+    // fallback to current date
+    return new Date();
   }
 }

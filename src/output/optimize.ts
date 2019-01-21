@@ -22,6 +22,7 @@ export async function optimize(pipeline: Pipeline, file: TargetFile, config: Con
   const optimizedContent = await ampOptimizer.transformHtml(file.content, {
     ampRuntimeVersion,
     ampUrl,
+    verbose: true,
     imageBasePath: config.optimizer.imageBasePath || config.dir.assets,
   });
   const optimized = TargetFile.create(canonicalPath, optimizedContent, file.source);

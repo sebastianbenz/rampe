@@ -18,6 +18,7 @@ export class Cli {
     const args = minimist(argv);
     const command = args._[0] || 'build';
     log.verbose = args.verbose;
+    this.config.verbose = this.config.verbose || args.verbose;
     switch (command) {
       case 'build':
         this.buildAll();
